@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  mongo-auth:
+    image: mongo:6.0
+    container_name: mongo-auth
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-auth-data:/data/db
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+
+  mongo-catalog:
+    image: mongo:6.0
+    container_name: mongo-catalog
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-catalog-data:/data/db
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+
+  mongo-inventory:
+    image: mongo:6.0
+    container_name: mongo-inventory
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-inventory-data:/data/db
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    env_file:
+      - ./services/auth-service/.env
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo-auth
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  catalog-service:
+    build:
+      context: ./services/catalog-service
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    env_file:
+      - ./services/catalog-service/.env
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo-catalog
+      - auth-service
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    env_file:
+      - ./services/inventory-service/.env
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongo-inventory
+      - auth-service
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-service
+      - catalog-service
+      - inventory-service
+    networks:
+      - medisupply-network
+    restart: unless-stopped
+
+networks:
+  medisupply-network:
+    driver: bridge
+
+volumes:
+  mongo-auth-data:
+  mongo-catalog-data:
+  mongo-inventory-data:
