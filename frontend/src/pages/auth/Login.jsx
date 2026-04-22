@@ -59,7 +59,7 @@ const Login = () => {
                   onChange={handleChange}
                   required
                   className="form-input pl-10"
-                  placeholder="admin@medisupply.com"
+                  placeholder="admin@rxpulse.com"
                 />
               </div>
             </div>

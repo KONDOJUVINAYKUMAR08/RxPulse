@@ -49,16 +49,16 @@ const User = mongoose.model('User', userSchema);
 // Seed default admin on startup
 const seedAdmin = async () => {
   try {
-    const existing = await User.findOne({ email: 'admin@medisupply.com' });
+    const existing = await User.findOne({ email: 'admin@rxpulse.com' });
     if (!existing) {
       await User.create({
         name: 'Admin User',
-        email: 'admin@medisupply.com',
+        email: 'admin@rxpulse.com',
         password: 'Admin@123',
         role: 'admin',
         department: 'Administration',
       });
-      console.log('[auth-service] Default admin user seeded: admin@medisupply.com');
+      console.log('[auth-service] Default admin user seeded: admin@rxpulse.com');
     }
   } catch (err) {
     console.error('[auth-service] Admin seed error:', err.message);
