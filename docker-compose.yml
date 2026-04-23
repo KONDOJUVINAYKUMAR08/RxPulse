@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   mongo-user:
     image: mongo:6.0
     container_name: mongo-user
@@ -101,13 +102,18 @@ services:
     container_name: frontend
     restart: always
     ports:
-      - "80:80"
+      - "8080:8080"          # ← CHANGED from 80:80
     depends_on:
       - user-service
       - catalog-service
       - inventory-service
     networks:
       - rxpulse-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   rxpulse-network:
