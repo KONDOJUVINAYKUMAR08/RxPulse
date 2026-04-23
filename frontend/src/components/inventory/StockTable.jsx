@@ -67,14 +67,14 @@ const StockTable = ({ stocks, loading, onUpdateThreshold }) => {
                 <td className="table-cell">
                   <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => navigate(`/stock-in?medicineId=${stock.medicineId}&medicineName=${encodeURIComponent(stock.medicineName)}`)}
+                      onClick={() => navigate(`/stock-in?medicineId=${stock._id}&medicineName=${encodeURIComponent(stock.medicineName)}`)}
                       className="p-1.5 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-600 transition-colors"
                       title="Stock In"
                     >
                       <PackagePlus className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => navigate(`/stock-out?medicineId=${stock.medicineId}&medicineName=${encodeURIComponent(stock.medicineName)}`)}
+                      onClick={() => navigate(`/stock-out?medicineId=${stock._id}&medicineName=${encodeURIComponent(stock.medicineName)}`)}
                       className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-600 transition-colors"
                       title="Stock Out"
                     >
