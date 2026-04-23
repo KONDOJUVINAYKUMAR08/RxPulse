@@ -1,6 +1,46 @@
-node_modules
-npm-debug.log
+# Dependencies folder (rebuilt inside Docker)
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files — NEVER go into image
 .env
-.git
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Git
+.git/
 .gitignore
-README.md
+
+# Documentation
+*.md
+README*
+
+# Test files
+coverage/
+.nyc_output/
+__tests__/
+*.test.js
+*.spec.js
+
+# Build artifacts
+dist/
+build/
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# NOTE: package-lock.json is NOT ignored
+# npm ci needs it to work
