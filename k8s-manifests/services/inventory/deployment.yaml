@@ -32,7 +32,7 @@ spec:
 
       containers:
         - name: inventory-service
-          image: rxpulsehub/rxpluse-inventory:latest
+          image: rxpulsehub/rxpulse-inventory:latest
           imagePullPolicy: Always
 
           ports:

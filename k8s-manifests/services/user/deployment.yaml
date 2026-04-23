@@ -32,9 +32,8 @@ spec:
 
       containers:
         - name: user-service
-          image: rxpulsehub/rxpluse-user:latest
+          image: rxpulsehub/rxpulse-user:latest
           imagePullPolicy: Always
-          containerPort: 3001
 
           ports:
             - containerPort: 3001

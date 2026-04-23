@@ -57,6 +57,8 @@ spec:
                 secretKeyRef:
                   name: rxpulse-secrets
                   key: MONGO_ROOT_PASSWORD
+            - name: MONGO_INITDB_DATABASE
+              value: "inventorydb"
 
           resources:
             requests:
