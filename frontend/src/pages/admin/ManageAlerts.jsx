@@ -45,7 +45,7 @@ export default function ManageAlerts() {
   return (
     <div className="flex min-h-screen bg-[#FAFAFA]">
       <AdminSidebar />
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-6 overflow-auto ml-60">
         <h1 className="text-xl font-bold text-[#1A1A1A] mb-1">Manage Alerts</h1>
         <p className="text-sm text-[#6B7280] mb-6">Monitor and resolve inventory alerts</p>
 

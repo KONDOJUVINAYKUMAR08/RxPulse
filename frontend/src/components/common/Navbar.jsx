@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Pill, ShoppingCart, User, LogOut, Menu, X, ChevronDown } from 'lucide-react';
+import {
+  Pill, ShoppingCart, User,
+  LogOut, Menu, X, ChevronDown
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 
@@ -24,7 +27,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 bg-white border-b border-[#F0F0F0] shadow-sm">
       <div className="page-container">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-[#2D6A4F] rounded-lg flex items-center justify-center">
               <Pill size={18} className="text-white" />
@@ -32,29 +35,29 @@ export default function Navbar() {
             <span className="text-xl font-bold text-[#1A1A1A]">RxPulse</span>
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className={isActive('/') ? 'nav-link-active' : 'nav-link'}>Home</Link>
             <Link to="/shop" className={isActive('/shop') ? 'nav-link-active' : 'nav-link'}>Shop</Link>
             {isAdmin && (
               <Link to="/admin/dashboard" className={location.pathname.startsWith('/admin') ? 'nav-link-active' : 'nav-link'}>
-                Admin
+                Admin Panel
               </Link>
             )}
           </nav>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                <Link to="/cart" id="cart-link" className="relative p-2 text-[#6B7280] hover:text-[#1A1A1A] transition-colors">
-                  <ShoppingCart size={22} />
-                  {totalItems > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#2D6A4F] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </span>
-                  )}
-                </Link>
+                {!isAdmin && (
+                  <Link to="/cart" id="cart-link" className="relative p-2 text-[#6B7280] hover:text-[#1A1A1A] transition-colors">
+                    <ShoppingCart size={22} />
+                    {totalItems > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#2D6A4F] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {totalItems > 99 ? '99+' : totalItems}
+                      </span>
+                    )}
+                  </Link>
+                )}
                 <div className="relative">
                   <button
                     id="user-menu-btn"
@@ -74,7 +77,21 @@ export default function Navbar() {
                       <div className="px-4 py-2 border-b border-[#F0F0F0]">
                         <p className="text-sm font-semibold text-[#1A1A1A] truncate">{user?.name}</p>
                         <p className="text-xs text-[#6B7280] truncate">{user?.email}</p>
+                        {isAdmin && (
+                          <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-[#E8F5E9] text-[#2D6A4F] px-2 py-0.5 rounded-full">
+                            Admin
+                          </span>
+                        )}
                       </div>
+                      {isAdmin && (
+                        <Link
+                          to="/admin/dashboard"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -97,12 +114,11 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {mobileOpen && (
           <div className="md:hidden border-t border-[#F0F0F0] py-3 space-y-1">
             <Link to="/" onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5]">Home</Link>
             <Link to="/shop" onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5]">Shop</Link>
-            {isAuthenticated && (
+            {isAuthenticated && !isAdmin && (
               <Link to="/cart" onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F5F5]">
                 Cart {totalItems > 0 && `(${totalItems})`}
               </Link>

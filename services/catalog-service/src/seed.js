@@ -28,7 +28,7 @@ const medicines = [
     unit: 'tablets',
     requiresPrescription: false,
     description: 'Paracetamol 500mg is used for the relief of mild to moderate pain including headache, migraine, nerve pain, toothache, sore throat, period pain and general aches and pains. It is also used to reduce fever.',
-    imageUrl: '',
+    imageUrl: 'https://onemg.gumlet.io/l_watermark_346,w_480,h_480/a_ignore,w_480,h_480,c_fit,q_auto,f_auto/7a74e0a2-8344-4b75-9cf0-5e5cc7d72c8b.jpg',
     isActive: true,
   },
   {
@@ -42,7 +42,7 @@ const medicines = [
     unit: 'capsules',
     requiresPrescription: true,
     description: 'Amoxicillin is a penicillin antibiotic used to treat many different types of infection caused by bacteria, such as tonsillitis, bronchitis, pneumonia, and infections of the ear, nose, throat, skin, or urinary tract.',
-    imageUrl: '',
+    imageUrl: 'https://onemg.gumlet.io/l_watermark_346,w_480,h_480/a_ignore,w_480,h_480,c_fit,q_auto,f_auto/2ee37a81-0f84-4b71-8e04-8e748c95adea.jpg',
     isActive: true,
   },
   {
@@ -70,7 +70,7 @@ const medicines = [
     unit: 'tablets',
     requiresPrescription: false,
     description: 'Ibuprofen is a nonsteroidal anti-inflammatory drug used to reduce fever and treat pain or inflammation caused by many conditions such as headache, toothache, back pain, arthritis, menstrual cramps, or minor injury.',
-    imageUrl: '',
+    imageUrl: 'https://onemg.gumlet.io/l_watermark_346,w_480,h_480/a_ignore,w_480,h_480,c_fit,q_auto,f_auto/7a74e0a2-8344-4b75-9cf0-5e5cc7d72c8b.jpg',
     isActive: true,
   },
   {

@@ -1,5 +1,6 @@
+import ManageMovements from './pages/admin/ManageMovements';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
 import Navbar from './components/common/Navbar';
@@ -19,7 +20,6 @@ import ManageMedicines from './pages/admin/ManageMedicines';
 import ManageInventory from './pages/admin/ManageInventory';
 import ManageAlerts from './pages/admin/ManageAlerts';
 
-// Layout for public pages (with Navbar + Footer)
 function PublicLayout({ children }) {
   return (
     <div className="flex flex-col min-h-screen">
@@ -30,26 +30,33 @@ function PublicLayout({ children }) {
   );
 }
 
+function CustomerRoute({ children }) {
+  const { isAuthenticated, isAdmin, loading } = useAuth();
+  if (loading) return null;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (isAdmin) return <Navigate to="/admin/dashboard" replace />;
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
             <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
             <Route path="/medicines/:id" element={<PublicLayout><MedicineDetail /></PublicLayout>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Protected customer routes */}
+            {/* Cart: only for logged in NON-admin users */}
             <Route
               path="/cart"
               element={
-                <ProtectedRoute>
+                <CustomerRoute>
                   <PublicLayout><Cart /></PublicLayout>
-                </ProtectedRoute>
+                </CustomerRoute>
               }
             />
 
@@ -71,8 +78,11 @@ export default function App() {
               path="/admin/alerts"
               element={<RoleGuard role="admin"><ManageAlerts /></RoleGuard>}
             />
+	    <Route
+  	      path="/admin/movements"
+  	      element={<RoleGuard role="admin"><ManageMovements /></RoleGuard>}
+	    />
 
-            {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </CartProvider>

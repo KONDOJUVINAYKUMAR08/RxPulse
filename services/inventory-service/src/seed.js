@@ -4,9 +4,10 @@ const Stock = require('./models/Stock');
 const Movement = require('./models/Movement');
 const Alert = require('./models/Alert');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo-inventory:27017/inventory_db';
+const MONGO_URI = process.env.MONGO_URI 
+  || 'mongodb://mongo-inventory:27017/inventory_db';
 
-const stocks = [
+const stocksData = [
   { medicineName: 'Paracetamol 500mg', category: 'Painkillers', currentQuantity: 450, unit: 'tablets', threshold: 50, location: 'Shelf B1', isLowStock: false },
   { medicineName: 'Amoxicillin 500mg', category: 'Antibiotics', currentQuantity: 150, unit: 'capsules', threshold: 30, location: 'Shelf A1', isLowStock: false },
   { medicineName: 'Azithromycin 250mg', category: 'Antibiotics', currentQuantity: 80, unit: 'tablets', threshold: 20, location: 'Shelf A2', isLowStock: false },
@@ -29,25 +30,14 @@ const stocks = [
   { medicineName: 'Diclofenac 50mg', category: 'Painkillers', currentQuantity: 12, unit: 'tablets', threshold: 25, location: 'Shelf B3', isLowStock: true },
 ];
 
-const movements = [
-  { medicineName: 'Paracetamol 500mg', type: 'STOCK_IN', quantity: 500, reason: 'Monthly restock', supplierName: 'MedCorp India', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 20 * 86400000) },
-  { medicineName: 'Paracetamol 500mg', type: 'STOCK_OUT', quantity: 50, reason: 'Customer orders', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 15 * 86400000) },
-  { medicineName: 'Amoxicillin 500mg', type: 'STOCK_IN', quantity: 200, reason: 'New stock', supplierName: 'Sun Pharma', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 18 * 86400000) },
-  { medicineName: 'Ibuprofen 400mg', type: 'STOCK_IN', quantity: 250, reason: 'Regular restock', supplierName: 'Dr Reddys', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 10 * 86400000) },
-  { medicineName: 'Vitamin C 500mg', type: 'STOCK_IN', quantity: 400, reason: 'Seasonal demand', supplierName: 'Himalaya', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 12 * 86400000) },
-  { medicineName: 'Metformin 500mg', type: 'STOCK_IN', quantity: 300, reason: 'Quarterly restock', supplierName: 'Sun Pharma', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 8 * 86400000) },
-  { medicineName: 'Cetirizine 10mg', type: 'STOCK_IN', quantity: 250, reason: 'Allergy season', supplierName: 'Abbott', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 5 * 86400000) },
-  { medicineName: 'Omeprazole 20mg', type: 'STOCK_IN', quantity: 200, reason: 'Regular restock', supplierName: 'Cipla', performedBy: 'admin', performedByName: 'Admin User', date: new Date(Date.now() - 3 * 86400000) },
-];
-
-const alerts = [
+const alertsData = [
   { medicineName: 'Vitamin D3 1000IU', alertType: 'LOW_STOCK', message: 'Vitamin D3 1000IU critically low. Only 8 units left. Threshold: 30.', severity: 'CRITICAL', isResolved: false },
   { medicineName: 'Glipizide 5mg', alertType: 'LOW_STOCK', message: 'Glipizide 5mg critically low. Only 5 units left. Threshold: 20.', severity: 'CRITICAL', isResolved: false },
   { medicineName: 'Atenolol 50mg', alertType: 'LOW_STOCK', message: 'Atenolol 50mg low. Only 15 units left. Threshold: 30.', severity: 'WARNING', isResolved: false },
   { medicineName: 'Loratadine 10mg', alertType: 'LOW_STOCK', message: 'Loratadine 10mg low. Only 10 units left. Threshold: 25.', severity: 'WARNING', isResolved: false },
-  { medicineName: 'Ciprofloxacin 500mg', alertType: 'LOW_STOCK', message: 'Ciprofloxacin 500mg critically low. Only 3 units left. Threshold: 20.', severity: 'CRITICAL', isResolved: false },
-  { medicineName: 'Ciprofloxacin 500mg', alertType: 'EXPIRY', message: 'Ciprofloxacin 500mg expires on 30 Apr 2026. Urgent action required.', severity: 'CRITICAL', isResolved: false },
-  { medicineName: 'Atenolol 50mg', alertType: 'EXPIRY', message: 'Atenolol 50mg batch expires on 01 May 2026.', severity: 'WARNING', isResolved: false },
+  { medicineName: 'Ciprofloxacin 500mg', alertType: 'LOW_STOCK', message: 'Ciprofloxacin 500mg critically low. Only 3 units left.', severity: 'CRITICAL', isResolved: false },
+  { medicineName: 'Ciprofloxacin 500mg', alertType: 'EXPIRY', message: 'Ciprofloxacin 500mg expires on 30 Apr 2026.', severity: 'CRITICAL', isResolved: false },
+  { medicineName: 'Atenolol 50mg', alertType: 'EXPIRY', message: 'Atenolol 50mg expires on 01 May 2026.', severity: 'WARNING', isResolved: false },
   { medicineName: 'Diclofenac 50mg', alertType: 'LOW_STOCK', message: 'Diclofenac 50mg low. Only 12 units left. Threshold: 25.', severity: 'WARNING', isResolved: false },
 ];
 
@@ -55,16 +45,56 @@ const seed = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('[inventory-service] Connected to inventory_db');
+
     await Stock.deleteMany({});
     await Movement.deleteMany({});
     await Alert.deleteMany({});
     console.log('[inventory-service] Cleared existing inventory data');
-    await Stock.insertMany(stocks);
-    console.log('[inventory-service] Inserted ' + stocks.length + ' stocks');
-    await Movement.insertMany(movements);
-    console.log('[inventory-service] Inserted ' + movements.length + ' movements');
-    await Alert.insertMany(alerts);
-    console.log('[inventory-service] Inserted ' + alerts.length + ' alerts');
+
+    // Build stocks with medicineId = medicineName
+    // (using medicineName as medicineId since no cross-DB reference)
+    const stocksToInsert = stocksData.map((s) => ({
+      medicineId: s.medicineName,
+      medicineName: s.medicineName,
+      category: s.category,
+      currentQuantity: s.currentQuantity,
+      unit: s.unit,
+      threshold: s.threshold,
+      location: s.location,
+      isLowStock: s.isLowStock,
+      lastUpdated: new Date(),
+    }));
+
+    await Stock.insertMany(stocksToInsert);
+    console.log(`[inventory-service] Inserted ${stocksToInsert.length} stock records`);
+
+    const now = Date.now();
+    const movementsToInsert = [
+      { medicineId: 'Paracetamol 500mg', medicineName: 'Paracetamol 500mg', type: 'STOCK_IN', quantity: 500, reason: 'Monthly restock', supplierName: 'MedCorp India', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 20 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Paracetamol 500mg', medicineName: 'Paracetamol 500mg', type: 'STOCK_OUT', quantity: 50, reason: 'Customer orders', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 15 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Amoxicillin 500mg', medicineName: 'Amoxicillin 500mg', type: 'STOCK_IN', quantity: 200, reason: 'New stock', supplierName: 'Sun Pharma', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 18 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Ibuprofen 400mg', medicineName: 'Ibuprofen 400mg', type: 'STOCK_IN', quantity: 250, reason: 'Regular restock', supplierName: 'Dr Reddys', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 10 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Vitamin C 500mg', medicineName: 'Vitamin C 500mg', type: 'STOCK_IN', quantity: 400, reason: 'Seasonal demand', supplierName: 'Himalaya', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 12 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Metformin 500mg', medicineName: 'Metformin 500mg', type: 'STOCK_IN', quantity: 300, reason: 'Quarterly restock', supplierName: 'Sun Pharma', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 8 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Cetirizine 10mg', medicineName: 'Cetirizine 10mg', type: 'STOCK_IN', quantity: 250, reason: 'Allergy season', supplierName: 'Abbott', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 5 * 24 * 60 * 60 * 1000) },
+      { medicineId: 'Omeprazole 20mg', medicineName: 'Omeprazole 20mg', type: 'STOCK_IN', quantity: 200, reason: 'Regular restock', supplierName: 'Cipla', performedBy: 'admin', performedByName: 'Admin User', date: new Date(now - 3 * 24 * 60 * 60 * 1000) },
+    ];
+
+    await Movement.insertMany(movementsToInsert);
+    console.log(`[inventory-service] Inserted ${movementsToInsert.length} movement records`);
+
+    const alertsToInsert = alertsData.map((a) => ({
+      medicineId: a.medicineName,
+      medicineName: a.medicineName,
+      alertType: a.alertType,
+      message: a.message,
+      severity: a.severity,
+      isResolved: a.isResolved,
+    }));
+
+    await Alert.insertMany(alertsToInsert);
+    console.log(`[inventory-service] Inserted ${alertsToInsert.length} alert records`);
+
     console.log('[inventory-service] Inventory seed completed successfully');
     process.exit(0);
   } catch (err) {

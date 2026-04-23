@@ -67,7 +67,7 @@ export default function ManageMedicines() {
   return (
     <div className="flex min-h-screen bg-[#FAFAFA]">
       <AdminSidebar />
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-6 overflow-auto ml-60">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold text-[#1A1A1A]">Manage Medicines</h1>
