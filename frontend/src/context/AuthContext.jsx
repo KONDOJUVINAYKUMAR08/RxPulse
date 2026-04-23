@@ -1,70 +1,56 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getProfile } from '../api/authApi';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { loginUser, registerUser } from '../api/userApi';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const restoreSession = async () => {
-      const storedToken = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-      if (storedToken && storedUser) {
-        try {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
-          setIsAuthenticated(true);
-          // Validate token is still valid by fetching profile
-          const res = await getProfile();
-          setUser(res.data.data);
-          localStorage.setItem('user', JSON.stringify(res.data.data));
-        } catch {
-          // Token expired or invalid
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setToken(null);
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      }
-      setIsLoading(false);
-    };
-    restoreSession();
+    const storedToken = localStorage.getItem('rxpulse_token');
+    const storedUser = localStorage.getItem('rxpulse_user');
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
   }, []);
 
-  const login = (tokenValue, userData) => {
-    localStorage.setItem('token', tokenValue);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(tokenValue);
-    setUser(userData);
-    setIsAuthenticated(true);
+  const login = async (email, password) => {
+    const res = await loginUser({ email, password });
+    const { token: t, user: u } = res.data.data;
+    setToken(t);
+    setUser(u);
+    localStorage.setItem('rxpulse_token', t);
+    localStorage.setItem('rxpulse_user', JSON.stringify(u));
+    return u;
+  };
+
+  const register = async (formData) => {
+    const res = await registerUser(formData);
+    const { token: t, user: u } = res.data.data;
+    setToken(t);
+    setUser(u);
+    localStorage.setItem('rxpulse_token', t);
+    localStorage.setItem('rxpulse_user', JSON.stringify(u));
+    return u;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
     setUser(null);
-    setIsAuthenticated(false);
-    window.location.href = '/login';
+    setToken(null);
+    localStorage.removeItem('rxpulse_token');
+    localStorage.removeItem('rxpulse_user');
+    localStorage.removeItem('rxpulse_cart');
   };
 
+  const isAdmin = user?.role === 'admin';
+  const isAuthenticated = !!token && !!user;
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        role: user?.role,
-        isAuthenticated,
-        isLoading,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAdmin, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
@@ -75,5 +61,3 @@ export const useAuth = () => {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 };
-
-export default AuthContext;

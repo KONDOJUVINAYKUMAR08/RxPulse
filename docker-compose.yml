@@ -1,55 +1,55 @@
 version: '3.8'
 
 services:
-  mongo-auth:
+  mongo-user:
     image: mongo:6.0
-    container_name: mongo-auth
+    container_name: mongo-user
+    restart: always
     ports:
-      - "27017:27017"
+      - "27020:27017"
     volumes:
-      - mongo-auth-data:/data/db
+      - mongo-user-data:/data/db
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
 
   mongo-catalog:
     image: mongo:6.0
     container_name: mongo-catalog
+    restart: always
     ports:
       - "27018:27017"
     volumes:
       - mongo-catalog-data:/data/db
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
 
   mongo-inventory:
     image: mongo:6.0
     container_name: mongo-inventory
+    restart: always
     ports:
       - "27019:27017"
     volumes:
       - mongo-inventory-data:/data/db
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
 
-  auth-service:
+  user-service:
     build:
-      context: ./services/auth-service
+      context: ./services/user-service
       dockerfile: Dockerfile
-    container_name: auth-service
-    env_file:
-      - ./services/auth-service/.env
+    container_name: user-service
+    restart: always
     ports:
       - "3001:3001"
+    env_file:
+      - ./services/user-service/.env
     depends_on:
-      - mongo-auth
+      - mongo-user
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -59,18 +59,17 @@ services:
       context: ./services/catalog-service
       dockerfile: Dockerfile
     container_name: catalog-service
-    env_file:
-      - ./services/catalog-service/.env
+    restart: always
     ports:
       - "3002:3002"
+    env_file:
+      - ./services/catalog-service/.env
     depends_on:
       - mongo-catalog
-      - auth-service
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -80,18 +79,17 @@ services:
       context: ./services/inventory-service
       dockerfile: Dockerfile
     container_name: inventory-service
-    env_file:
-      - ./services/inventory-service/.env
+    restart: always
     ports:
       - "3003:3003"
+    env_file:
+      - ./services/inventory-service/.env
     depends_on:
       - mongo-inventory
-      - auth-service
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3003/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -101,21 +99,21 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend
+    restart: always
     ports:
       - "80:80"
     depends_on:
-      - auth-service
+      - user-service
       - catalog-service
       - inventory-service
     networks:
-      - medisupply-network
-    restart: unless-stopped
+      - rxpulse-network
 
 networks:
-  medisupply-network:
+  rxpulse-network:
     driver: bridge
 
 volumes:
-  mongo-auth-data:
+  mongo-user-data:
   mongo-catalog-data:
   mongo-inventory-data:
