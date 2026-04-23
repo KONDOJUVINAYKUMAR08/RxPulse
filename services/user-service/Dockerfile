@@ -1,17 +1,21 @@
-# Stage 1: Builder
+# ── Stage 1: Builder ─────────────────────────────────────────────
 FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
-COPY . .
+RUN npm ci
+COPY src/ ./src/
 
-# Stage 2: Production
+# ── Stage 2: Production Runner ───────────────────────────────────
 FROM node:18-alpine AS production
+RUN addgroup -S rxpulse && \
+    adduser -S rxpulse -G rxpulse
 WORKDIR /app
-COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm ci --omit=dev
 COPY --from=builder /app/src ./src
-COPY --from=builder /app/package.json ./package.json
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+RUN chown -R rxpulse:rxpulse /app
+USER rxpulse
 EXPOSE 3001
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD wget -qO- http://localhost:3001/health || exit 1
 CMD ["node", "src/app.js"]
