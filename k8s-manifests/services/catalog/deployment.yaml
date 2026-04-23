@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  namespace: rxpulse-dev
+  labels:
+    app: catalog-service
+    app.kubernetes.io/name: catalog-service
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: kubectl
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-service
+
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+        app.kubernetes.io/name: catalog-service
+        app.kubernetes.io/part-of: rxpulse
+        environment: dev
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: catalog-service
+          image: rxpulsehub/rxpulse-catalog:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3002
+              name: http
+              protocol: TCP
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: rxpulse-config
+                  key: CATALOG_SERVICE_PORT
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: rxpulse-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_CATALOG_URI
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3

@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rxpulse-dev
+
+resources:
+  - ../../base/namespace.yaml
+  - ../../base/configmap.yaml
+  - ../../base/sealedsecret.yaml
+  - ../../storage/nfs-storageclass.yaml
+  - ../../storage/mongo-user-pvc.yaml
+  - ../../storage/mongo-catalog-pvc.yaml
+  - ../../storage/mongo-inventory-pvc.yaml
+  - ../../database/mongo-user-statefulset.yaml
+  - ../../database/mongo-user-service.yaml
+  - ../../database/mongo-catalog-statefulset.yaml
+  - ../../database/mongo-catalog-service.yaml
+  - ../../database/mongo-inventory-statefulset.yaml
+  - ../../database/mongo-inventory-service.yaml
+  - ../../services/user/deployment.yaml
+  - ../../services/user/service.yaml
+  - ../../services/catalog/deployment.yaml
+  - ../../services/catalog/service.yaml
+  - ../../services/inventory/deployment.yaml
+  - ../../services/inventory/service.yaml
+  - ../../services/frontend/rollout.yaml
+  - ../../services/frontend/service.yaml
+  - ../../networking/gateway.yaml
+  - ../../networking/httproute.yaml
+  - ../../networking/networkpolicy.yaml
+  - ../../scaling/frontend-hpa.yaml
+
+patches:
+  - path: patches/replicas.yaml
+  - path: patches/images.yaml
+
+commonLabels:
+  environment: dev

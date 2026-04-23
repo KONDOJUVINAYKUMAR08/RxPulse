@@ -1,0 +1,21 @@
+# Development namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rxpulse-dev
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: kubectl
+    environment: dev
+
+---
+
+# Production namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rxpulse-prod
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: kubectl
+    environment: prod

@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-catalog
+  namespace: rxpulse-dev
+  labels:
+    app: mongo-catalog
+    app.kubernetes.io/name: mongo-catalog
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: kubectl
+    environment: dev
+spec:
+  replicas: 1
+  serviceName: mongo-catalog   
+  selector:
+    matchLabels:
+      app: mongo-catalog
+
+  template:
+    metadata:
+      labels:
+        app: mongo-catalog
+        app.kubernetes.io/name: mongo-catalog
+        app.kubernetes.io/part-of: rxpulse
+        environment: dev
+    spec:
+      securityContext:
+        fsGroup: 999         
+        runAsUser: 999      
+        runAsGroup: 999
+        runAsNonRoot: true
+
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: mongo-catalog
+          image: mongo:6.0
+          imagePullPolicy: Always
+          command:
+            - mongod
+            - --bind_ip_all
+
+          ports:
+            - containerPort: 27017
+              name: mongo
+              protocol: TCP
+
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_ROOT_PASSWORD
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+
+          volumeMounts:
+            - name: mongo-catalog-data
+              mountPath: /data/db
+
+          livenessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+      volumes:
+        - name: mongo-catalog-data
+          persistentVolumeClaim:
+            claimName: mongo-catalog-pvc

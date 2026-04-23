@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-catalog
+  namespace: rxpulse-dev
+  labels:
+    app: mongo-catalog
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: kubectl
+    environment: dev
+spec:
+  clusterIP: None
+  selector:
+    app: mongo-catalog
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+      protocol: TCP

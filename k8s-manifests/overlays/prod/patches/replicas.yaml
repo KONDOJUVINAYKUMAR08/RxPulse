@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: rxpulse-prod
+spec:
+  replicas: 2
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  namespace: rxpulse-prod
+spec:
+  replicas: 2
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service
+  namespace: rxpulse-prod
+spec:
+  replicas: 2
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: frontend
+  namespace: rxpulse-prod
+spec:
+  replicas: 3

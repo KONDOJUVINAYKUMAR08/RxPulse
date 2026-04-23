@@ -1,0 +1,12 @@
+images:
+  - name: rxpulsehub/rxpluse-frontend
+    newTag: latest
+
+  - name: rxpulsehub/rxpluse-user
+    newTag: latest
+
+  - name: rxpulsehub/rxpulse-catalog
+    newTag: latest
+
+  - name: rxpulsehub/rxpluse-inventory
+    newTag: latest
