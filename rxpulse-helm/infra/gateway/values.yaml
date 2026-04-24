@@ -1,0 +1,23 @@
+gateway:
+  name: rxpulse-gateway
+  className: kgateway
+  port: 80
+  protocol: HTTP
+
+routes:
+  user:
+    path: /api/users/
+    service: user-service
+    port: 3001
+  catalog:
+    path: /api/catalog/
+    service: catalog-service
+    port: 3002
+  inventory:
+    path: /api/inventory/
+    service: inventory-service
+    port: 3003
+  frontend:
+    path: /
+    service: frontend-active
+    port: 80

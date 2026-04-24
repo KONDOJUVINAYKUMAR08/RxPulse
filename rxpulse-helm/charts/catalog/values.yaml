@@ -1,0 +1,47 @@
+
+replicaCount: 1
+
+image:
+  repository: rxpulsehub/rxpulse-catalog
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3002
+  targetPort: 3002
+secretName: rxpulse-secrets
+configMapName: rxpulse-config
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+seedJob:
+  enabled: true
+  backoffLimit: 6
+
+probes:
+  liveness:
+    path: /health
+    port: 3002
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /health
+    port: 3002
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  allowPrivilegeEscalation: false

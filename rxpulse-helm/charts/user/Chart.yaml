@@ -1,0 +1,12 @@
+apiVersion: v2
+name: user
+description: RxPulse User Service — authentication, registration and user management
+type: application
+version: 1.0.0
+appVersion: "latest"
+keywords:
+  - rxpulse
+  - user
+  - auth
+maintainers:
+  - name: RxPulse Team

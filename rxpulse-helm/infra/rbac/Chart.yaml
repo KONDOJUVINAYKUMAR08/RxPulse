@@ -1,0 +1,7 @@
+apiVersion: v2
+name: rbac
+description: RxPulse RBAC — Namespace, ConfigMap, and ServiceAccount resources
+type: application
+version: 1.0.0
+maintainers:
+  - name: RxPulse Team

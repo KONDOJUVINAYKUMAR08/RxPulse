@@ -1,0 +1,17 @@
+apiVersion: v2
+name: frontend
+description: RxPulse Frontend — React SPA with Argo Rollouts blue-green strategy
+type: application
+version: 1.0.0
+appVersion: "v3"
+keywords:
+  - rxpulse
+  - frontend
+  - pharmacy
+maintainers:
+  - name: RxPulse Team
+dependencies:
+  - name: argo-rollouts
+    version: ">=2.0.0"
+    repository: https://argoproj.github.io/argo-helm
+    condition: argoRollouts.enabled

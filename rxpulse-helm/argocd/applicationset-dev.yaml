@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rxpulse-dev
+  namespace: argocd
+  labels:
+    environment: dev
+spec:
+  generators:
+    - list:
+        elements:
+          - chart: infra/rbac
+            name: rxpulse-rbac-dev
+          - chart: infra/sealed-secrets
+            name: rxpulse-secrets-dev
+          - chart: infra/mongodb
+            name: rxpulse-mongodb-dev
+          - chart: infra/gateway
+            name: rxpulse-gateway-dev
+          - chart: charts/user
+            name: rxpulse-user-dev
+          - chart: charts/catalog
+            name: rxpulse-catalog-dev
+          - chart: charts/inventory
+            name: rxpulse-inventory-dev
+
+  template:
+    metadata:
+      name: "{{ '{{' }} .name {{ '}}' }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: rxpulse
+        environment: dev
+    spec:
+      project: rxpulse
+
+      source:
+        repoURL: https://github.com/KONDOJUVINAYKUMAR08/rxpulse-helm.git
+        targetRevision: HEAD
+        path: "{{ '{{' }} .chart {{ '}}' }}"
+        helm:
+          valueFiles:
+            - ../../environments/values-dev.yaml
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: rxpulse-dev
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

@@ -1,0 +1,122 @@
+
+{{- range $name, $cfg := .Values.services }}
+{{- if $cfg.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-{{ $name }}
+  labels:
+    app: mongo-{{ $name }}
+    app.kubernetes.io/name: mongo-{{ $name }}
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  serviceName: mongo-{{ $name }}
+  selector:
+    matchLabels:
+      app: mongo-{{ $name }}
+  template:
+    metadata:
+      labels:
+        app: mongo-{{ $name }}
+        app.kubernetes.io/name: mongo-{{ $name }}
+        app.kubernetes.io/part-of: rxpulse
+    spec:
+      securityContext:
+        fsGroup: 999
+        runAsUser: 999
+        runAsGroup: 999
+        runAsNonRoot: true
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: mongo-{{ $name }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command:
+            - mongod
+            - --bind_ip_all
+          ports:
+            - containerPort: 27017
+              name: mongo
+              protocol: TCP
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secretName }}
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secretName }}
+                  key: MONGO_ROOT_PASSWORD
+            - name: MONGO_INITDB_DATABASE
+              value: {{ $cfg.database | quote }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: mongo-{{ $name }}-data
+              mountPath: /data/db
+          livenessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: mongo-{{ $name }}-data
+          persistentVolumeClaim:
+            claimName: {{ $cfg.pvcName }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-{{ $name }}
+  labels:
+    app: mongo-{{ $name }}
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+spec:
+  clusterIP: None
+  selector:
+    app: mongo-{{ $name }}
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $cfg.pvcName }}
+  labels:
+    app: mongo-{{ $name }}
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ $.Values.storageClass }}
+  resources:
+    requests:
+      storage: {{ $.Values.storage }}
+{{- end }}
+{{- end }}

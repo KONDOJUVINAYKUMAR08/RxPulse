@@ -1,0 +1,32 @@
+
+image:
+  repository: mongo
+  tag: "6.0"
+  pullPolicy: Always
+
+secretName: rxpulse-secrets
+
+storageClass: nfs-client
+storage: 5Gi
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+services:
+  user:
+    enabled: true
+    database: userdb
+    pvcName: mongo-user-pvc
+  catalog:
+    enabled: true
+    database: catalogdb
+    pvcName: mongo-catalog-pvc
+  inventory:
+    enabled: true
+    database: inventorydb
+    pvcName: mongo-inventory-pvc

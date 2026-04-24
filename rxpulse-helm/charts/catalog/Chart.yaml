@@ -1,0 +1,12 @@
+apiVersion: v2
+name: catalog
+description: RxPulse Catalog Service — manages medicines and categories
+type: application
+version: 1.0.0
+appVersion: "latest"
+keywords:
+  - rxpulse
+  - catalog
+  - pharmacy
+maintainers:
+  - name: RxPulse Team

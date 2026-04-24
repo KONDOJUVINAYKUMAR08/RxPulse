@@ -1,0 +1,33 @@
+{{- if .Values.seedJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: inventory-seed-job
+  labels:
+    app: inventory-seed
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: {{ .Values.seedJob.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        app: inventory-seed
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: inventory-seed
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "src/seed.js"]
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: MONGO_INVENTORY_URI
+{{- end }}

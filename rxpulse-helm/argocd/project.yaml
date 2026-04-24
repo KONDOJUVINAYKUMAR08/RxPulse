@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: rxpulse
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+spec:
+  description: RxPulse Pharmacy Management Platform
+  sourceRepos:
+    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-helm.git
+    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-frontend.git
+    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-user-service.git
+    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-catalog-service.git
+    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-inventory-service.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: rxpulse-dev
+    - server: https://kubernetes.default.svc
+      namespace: rxpulse-prod
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: storage.k8s.io
+      kind: StorageClass
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: developer
+      description: Developer access — sync dev environment only
+      policies:
+        - p, proj:rxpulse:developer, applications, get, rxpulse/*, allow
+        - p, proj:rxpulse:developer, applications, sync, rxpulse/*-dev, allow
+    - name: ops
+      description: Ops access — full sync across all environments
+      policies:
+        - p, proj:rxpulse:ops, applications, *, rxpulse/*, allow

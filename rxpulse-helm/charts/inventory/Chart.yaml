@@ -1,0 +1,12 @@
+apiVersion: v2
+name: inventory
+description: RxPulse Inventory Service — manages stock, movements and alerts
+type: application
+version: 1.0.0
+appVersion: "latest"
+keywords:
+  - rxpulse
+  - inventory
+  - pharmacy
+maintainers:
+  - name: RxPulse Team

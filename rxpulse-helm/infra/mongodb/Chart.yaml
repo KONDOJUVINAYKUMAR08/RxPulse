@@ -1,0 +1,8 @@
+apiVersion: v2
+name: mongodb
+description: RxPulse MongoDB StatefulSets — one instance per microservice
+type: application
+version: 1.0.0
+appVersion: "6.0"
+maintainers:
+  - name: RxPulse Team

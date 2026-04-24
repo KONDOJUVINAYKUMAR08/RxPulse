@@ -1,0 +1,22 @@
+
+namespace: rxpulse-dev
+
+configMap:
+  name: rxpulse-config
+  nodeEnv: development
+  userServicePort: "3001"
+  userMongoHost: mongo-user
+  userMongoPort: "27017"
+  userMongoDb: userdb
+  catalogServicePort: "3002"
+  catalogMongoHost: mongo-catalog
+  catalogMongoPort: "27017"
+  catalogMongoDb: catalogdb
+  inventoryServicePort: "3003"
+  inventoryMongoHost: mongo-inventory
+  inventoryMongoPort: "27017"
+  inventoryMongoDb: inventorydb
+  frontendPort: "8080"
+  viteUserServiceUrl: "http://user-service:3001"
+  viteCatalogServiceUrl: "http://catalog-service:3002"
+  viteInventoryServiceUrl: "http://inventory-service:3003"

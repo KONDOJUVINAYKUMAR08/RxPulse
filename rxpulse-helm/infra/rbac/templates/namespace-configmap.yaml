@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+    app.kubernetes.io/managed-by: Helm
+data:
+  NODE_ENV: {{ .Values.configMap.nodeEnv | quote }}
+
+  USER_SERVICE_PORT: {{ .Values.configMap.userServicePort | quote }}
+  USER_MONGO_HOST: {{ .Values.configMap.userMongoHost | quote }}
+  USER_MONGO_PORT: {{ .Values.configMap.userMongoPort | quote }}
+  USER_MONGO_DB: {{ .Values.configMap.userMongoDb | quote }}
+
+  CATALOG_SERVICE_PORT: {{ .Values.configMap.catalogServicePort | quote }}
+  CATALOG_MONGO_HOST: {{ .Values.configMap.catalogMongoHost | quote }}
+  CATALOG_MONGO_PORT: {{ .Values.configMap.catalogMongoPort | quote }}
+  CATALOG_MONGO_DB: {{ .Values.configMap.catalogMongoDb | quote }}
+
+  INVENTORY_SERVICE_PORT: {{ .Values.configMap.inventoryServicePort | quote }}
+  INVENTORY_MONGO_HOST: {{ .Values.configMap.inventoryMongoHost | quote }}
+  INVENTORY_MONGO_PORT: {{ .Values.configMap.inventoryMongoPort | quote }}
+  INVENTORY_MONGO_DB: {{ .Values.configMap.inventoryMongoDb | quote }}
+
+  FRONTEND_PORT: {{ .Values.configMap.frontendPort | quote }}
+  VITE_USER_SERVICE_URL: {{ .Values.configMap.viteUserServiceUrl | quote }}
+  VITE_CATALOG_SERVICE_URL: {{ .Values.configMap.viteCatalogServiceUrl | quote }}
+  VITE_INVENTORY_SERVICE_URL: {{ .Values.configMap.viteInventoryServiceUrl | quote }}

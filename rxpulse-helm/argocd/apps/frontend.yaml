@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rxpulse-frontend-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: rxpulse
+    environment: dev
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: rxpulse
+
+  source:
+    repoURL: https://github.com/KONDOJUVINAYKUMAR08/rxpulse-helm.git
+    targetRevision: HEAD
+    path: charts/frontend
+    helm:
+      valueFiles:
+        - ../../environments/values-dev.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rxpulse-dev
+
+  syncPolicy:
+    automated: null
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

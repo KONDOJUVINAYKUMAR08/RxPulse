@@ -1,0 +1,7 @@
+# Helm .helmignore — files excluded from helm package
+*.md
+*.txt
+.git/
+.gitignore
+tests/
+*_test.yaml

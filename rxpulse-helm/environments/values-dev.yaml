@@ -1,0 +1,51 @@
+
+global:
+  namespace: rxpulse-dev
+  environment: dev
+catalog:
+  replicaCount: 1
+  image:
+    tag: latest
+  seedJob:
+    enabled: true
+inventory:
+  replicaCount: 1
+  image:
+    tag: latest
+  seedJob:
+    enabled: true
+user:
+  replicaCount: 1
+  image:
+    tag: latest
+frontend:
+  replicaCount: 2
+  image:
+    tag: v3
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+rbac:
+  namespace: rxpulse-dev
+  configMap:
+    nodeEnv: development
+sealed-secrets:
+  secret:
+    mongoRootUsername: "admin"
+    mongoRootPassword: "RxPulse@Mongo2024"
+    mongoUserUri: "mongodb://mongo-user:27017/userdb"
+    mongoCatalogUri: "mongodb://mongo-catalog:27017/catalogdb"
+    mongoInventoryUri: "mongodb://mongo-inventory:27017/inventorydb"
+    jwtSecret: "rxpulse_jwt_super_secret_k8s_2024"
+    jwtExpiresIn: "7d"
+mongodb:
+  storage: 5Gi
+  storageClass: nfs-client
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
