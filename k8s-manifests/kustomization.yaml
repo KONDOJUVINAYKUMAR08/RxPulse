@@ -39,7 +39,7 @@ resources:
 # Image tags
 images:
   - name: rxpulsehub/rxpulse-frontend
-    newTag: v2
+    newTag: v3
   - name: rxpulsehub/rxpulse-user
     newTag: latest
   - name: rxpulsehub/rxpulse-catalog

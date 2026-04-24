@@ -33,7 +33,7 @@ spec:
 
       containers:
         - name: frontend
-          image: rxpulsehub/rxpulse-frontend:v2
+          image: rxpulsehub/rxpulse-frontend:v3
           imagePullPolicy: Always
 
           ports:

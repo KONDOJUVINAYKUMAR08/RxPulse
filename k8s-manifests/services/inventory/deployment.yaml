@@ -62,6 +62,16 @@ spec:
                 secretKeyRef:
                   name: rxpulse-secrets
                   key: MONGO_INVENTORY_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRES_IN
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: JWT_EXPIRES_IN
 
           resources:
             requests:
