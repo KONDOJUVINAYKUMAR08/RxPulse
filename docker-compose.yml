@@ -39,6 +39,7 @@ services:
     build:
       context: ./services/user-service
       dockerfile: Dockerfile
+    image: rxpulsehub/rxpulse-user:latest
     container_name: user-service
     restart: always
     ports:
@@ -59,6 +60,7 @@ services:
     build:
       context: ./services/catalog-service
       dockerfile: Dockerfile
+    image: rxpulsehub/rxpulse-catalog:latest
     container_name: catalog-service
     restart: always
     ports:
@@ -79,6 +81,7 @@ services:
     build:
       context: ./services/inventory-service
       dockerfile: Dockerfile
+    image: rxpulsehub/rxpulse-inventory:latest
     container_name: inventory-service
     restart: always
     ports:
@@ -99,10 +102,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: rxpulsehub/rxpulse-frontend:latest
     container_name: frontend
     restart: always
     ports:
-      - "8080:8080"          # ← CHANGED from 80:80
+      - "8080:8080"   
     depends_on:
       - user-service
       - catalog-service
