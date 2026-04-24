@@ -1,7 +1,12 @@
+{{- $ns := .Values.namespace }}
+{{- if .Values.global }}{{- if .Values.global.namespace }}{{- $ns = .Values.global.namespace }}{{- end }}{{- end }}
+{{- $cm := .Values.configMap }}
+{{- if hasKey .Values "base" }}{{- if hasKey (index .Values "base") "namespace" }}{{- $ns = index (index .Values "base") "namespace" }}{{- end }}{{- end }}
+{{- if hasKey .Values "base" }}{{- if hasKey (index .Values "base") "configMap" }}{{- $cm = index (index .Values "base") "configMap" }}{{- end }}{{- end }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.namespace }}
+  name: {{ $ns }}
   labels:
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: Helm
@@ -11,29 +16,29 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.configMap.name }}
+  name: {{ $cm.name }}
   labels:
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: Helm
 data:
-  NODE_ENV: {{ .Values.configMap.nodeEnv | quote }}
+  NODE_ENV: {{ $cm.nodeEnv | quote }}
 
-  USER_SERVICE_PORT: {{ .Values.configMap.userServicePort | quote }}
-  USER_MONGO_HOST: {{ .Values.configMap.userMongoHost | quote }}
-  USER_MONGO_PORT: {{ .Values.configMap.userMongoPort | quote }}
-  USER_MONGO_DB: {{ .Values.configMap.userMongoDb | quote }}
+  USER_SERVICE_PORT: {{ $cm.userServicePort | quote }}
+  USER_MONGO_HOST: {{ $cm.userMongoHost | quote }}
+  USER_MONGO_PORT: {{ $cm.userMongoPort | quote }}
+  USER_MONGO_DB: {{ $cm.userMongoDb | quote }}
 
-  CATALOG_SERVICE_PORT: {{ .Values.configMap.catalogServicePort | quote }}
-  CATALOG_MONGO_HOST: {{ .Values.configMap.catalogMongoHost | quote }}
-  CATALOG_MONGO_PORT: {{ .Values.configMap.catalogMongoPort | quote }}
-  CATALOG_MONGO_DB: {{ .Values.configMap.catalogMongoDb | quote }}
+  CATALOG_SERVICE_PORT: {{ $cm.catalogServicePort | quote }}
+  CATALOG_MONGO_HOST: {{ $cm.catalogMongoHost | quote }}
+  CATALOG_MONGO_PORT: {{ $cm.catalogMongoPort | quote }}
+  CATALOG_MONGO_DB: {{ $cm.catalogMongoDb | quote }}
 
-  INVENTORY_SERVICE_PORT: {{ .Values.configMap.inventoryServicePort | quote }}
-  INVENTORY_MONGO_HOST: {{ .Values.configMap.inventoryMongoHost | quote }}
-  INVENTORY_MONGO_PORT: {{ .Values.configMap.inventoryMongoPort | quote }}
-  INVENTORY_MONGO_DB: {{ .Values.configMap.inventoryMongoDb | quote }}
+  INVENTORY_SERVICE_PORT: {{ $cm.inventoryServicePort | quote }}
+  INVENTORY_MONGO_HOST: {{ $cm.inventoryMongoHost | quote }}
+  INVENTORY_MONGO_PORT: {{ $cm.inventoryMongoPort | quote }}
+  INVENTORY_MONGO_DB: {{ $cm.inventoryMongoDb | quote }}
 
-  FRONTEND_PORT: {{ .Values.configMap.frontendPort | quote }}
-  VITE_USER_SERVICE_URL: {{ .Values.configMap.viteUserServiceUrl | quote }}
-  VITE_CATALOG_SERVICE_URL: {{ .Values.configMap.viteCatalogServiceUrl | quote }}
-  VITE_INVENTORY_SERVICE_URL: {{ .Values.configMap.viteInventoryServiceUrl | quote }}
+  FRONTEND_PORT: {{ $cm.frontendPort | quote }}
+  VITE_USER_SERVICE_URL: {{ $cm.viteUserServiceUrl | quote }}
+  VITE_CATALOG_SERVICE_URL: {{ $cm.viteCatalogServiceUrl | quote }}
+  VITE_INVENTORY_SERVICE_URL: {{ $cm.viteInventoryServiceUrl | quote }}
