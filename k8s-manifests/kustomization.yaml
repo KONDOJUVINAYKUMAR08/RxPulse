@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rxpulse-dev
+
+resources:
+  # Namespace
+  - base/namespace-dev.yaml
+  # Config & Secrets
+  - base/configmap.yaml
+  - base/sealedsecret.yaml
+  # Storage
+  - storage/nfs-storageclass.yaml
+  - storage/mongo-user-pvc.yaml
+  - storage/mongo-catalog-pvc.yaml
+  - storage/mongo-inventory-pvc.yaml
+  # Database
+  - database/mongo-user-statefulset.yaml
+  - database/mongo-user-service.yaml
+  - database/mongo-catalog-statefulset.yaml
+  - database/mongo-catalog-service.yaml
+  - database/mongo-inventory-statefulset.yaml
+  - database/mongo-inventory-service.yaml
+  # Services
+  - services/user/deployment.yaml
+  - services/user/service.yaml
+  - services/catalog/deployment.yaml
+  - services/catalog/service.yaml
+  - services/inventory/deployment.yaml
+  - services/inventory/service.yaml
+  - services/frontend/rollout.yaml
+  - services/frontend/service.yaml
+  # Networking
+  - networking/gateway.yaml
+  - networking/httproute.yaml
+  - networking/networkpolicy.yaml
+  # Scaling
+  - scaling/frontend-hpa.yaml
+
+# Image tags
+images:
+  - name: rxpulsehub/rxpulse-frontend
+    newTag: v2
+  - name: rxpulsehub/rxpulse-user
+    newTag: latest
+  - name: rxpulsehub/rxpulse-catalog
+    newTag: latest
+  - name: rxpulsehub/rxpulse-inventory
+    newTag: latest
+
+labels:
+  - pairs:
+      environment: dev
+    includeSelectors: false
