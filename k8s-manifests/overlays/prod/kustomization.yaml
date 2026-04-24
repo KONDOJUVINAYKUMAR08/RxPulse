@@ -38,7 +38,7 @@ resources:
 # Image tags — must match the `image:` name EXACTLY as written in the manifests
 images:
   - name: rxpulsehub/rxpulse-frontend
-    newTag: stable
+    newTag: v2
   - name: rxpulsehub/rxpulse-user
     newTag: stable
   - name: rxpulsehub/rxpulse-catalog
