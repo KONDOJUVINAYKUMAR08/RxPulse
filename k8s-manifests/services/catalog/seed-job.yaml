@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: catalog-seed-job
+  labels:
+    app: catalog-seed
+    environment: dev
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: catalog-seed
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: catalog-seed
+          image: rxpulsehub/rxpulse-catalog:latest
+          imagePullPolicy: Always
+          command: ["node", "src/seed.js"]
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_CATALOG_URI

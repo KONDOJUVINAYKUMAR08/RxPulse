@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: inventory-seed-job
+  labels:
+    app: inventory-seed
+    environment: dev
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: inventory-seed
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: inventory-seed
+          image: rxpulsehub/rxpulse-inventory:latest
+          imagePullPolicy: Always
+          command: ["node", "src/seed.js"]
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_INVENTORY_URI
