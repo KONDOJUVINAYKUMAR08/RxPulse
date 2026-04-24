@@ -28,10 +28,18 @@ spec:
 
     - from:
         - podSelector:
-            matchLabels:
-              app: catalog-service
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - catalog-service
+                  - catalog-seed
 
     - from:
         - podSelector:
-            matchLabels:
-              app: inventory-service
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - inventory-service
+                  - inventory-seed
