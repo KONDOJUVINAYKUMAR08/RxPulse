@@ -1,12 +1,4 @@
-images:
-  - name: rxpulsehub/rxpluse-frontend
-    newTag: latest
-
-  - name: rxpulsehub/rxpluse-user
-    newTag: latest
-
-  - name: rxpulsehub/rxpulse-catalog
-    newTag: latest
-
-  - name: rxpulsehub/rxpluse-inventory
-    newTag: latest
+# This file is intentionally kept as a placeholder.
+# Image overrides are now configured directly in kustomization.yaml
+# under the `images:` key, which is the correct Kustomize pattern.
+# Strategic merge patches cannot contain `images:` directives.

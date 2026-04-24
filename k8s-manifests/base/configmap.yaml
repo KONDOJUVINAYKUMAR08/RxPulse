@@ -2,11 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: rxpulse-config
-  namespace: rxpulse-dev
+
   labels:
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: kubectl
-    environment: dev
 data:
   NODE_ENV: "development"
 

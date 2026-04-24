@@ -18,7 +18,12 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const requestUrl = error.config?.url || '';
+    const isAuthEndpoint =
+      requestUrl.includes('/api/users/login') ||
+      requestUrl.includes('/api/users/register');
+
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem('rxpulse_token');
       localStorage.removeItem('rxpulse_user');
       window.location.href = '/login';

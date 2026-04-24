@@ -3,19 +3,23 @@ kind: Kustomization
 namespace: rxpulse-prod
 
 resources:
-  - ../../base/namespace.yaml
+  # Namespace (prod-only)
+  - ../../base/namespace-prod.yaml
   - ../../base/configmap.yaml
   - ../../base/sealedsecret.yaml
+  # Storage
   - ../../storage/nfs-storageclass.yaml
   - ../../storage/mongo-user-pvc.yaml
   - ../../storage/mongo-catalog-pvc.yaml
   - ../../storage/mongo-inventory-pvc.yaml
+  # Database
   - ../../database/mongo-user-statefulset.yaml
   - ../../database/mongo-user-service.yaml
   - ../../database/mongo-catalog-statefulset.yaml
   - ../../database/mongo-catalog-service.yaml
   - ../../database/mongo-inventory-statefulset.yaml
   - ../../database/mongo-inventory-service.yaml
+  # Services
   - ../../services/user/deployment.yaml
   - ../../services/user/service.yaml
   - ../../services/catalog/deployment.yaml
@@ -24,14 +28,27 @@ resources:
   - ../../services/inventory/service.yaml
   - ../../services/frontend/rollout.yaml
   - ../../services/frontend/service.yaml
+  # Networking
   - ../../networking/gateway.yaml
   - ../../networking/httproute.yaml
   - ../../networking/networkpolicy.yaml
+  # Scaling
   - ../../scaling/frontend-hpa.yaml
 
+# Image tags — must match the `image:` name EXACTLY as written in the manifests
+images:
+  - name: rxpulsehub/rxpulse-frontend
+    newTag: stable
+  - name: rxpulsehub/rxpulse-user
+    newTag: stable
+  - name: rxpulsehub/rxpulse-catalog
+    newTag: stable
+  - name: rxpulsehub/rxpulse-inventory
+    newTag: stable
+
+# Strategic merge patches
 patches:
   - path: patches/replicas.yaml
-  - path: patches/images.yaml
 
 commonLabels:
   environment: prod
