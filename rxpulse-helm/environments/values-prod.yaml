@@ -35,7 +35,7 @@ frontend:
     limits:
       cpu: 1000m
       memory: 1Gi
-rbac:
+base:
   namespace: rxpulse-prod
   configMap:
     nodeEnv: production

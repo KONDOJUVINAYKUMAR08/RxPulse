@@ -26,7 +26,7 @@ frontend:
     enabled: true
     minReplicas: 2
     maxReplicas: 5
-rbac:
+base:
   namespace: rxpulse-dev
   configMap:
     nodeEnv: development

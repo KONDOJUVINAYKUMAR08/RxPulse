@@ -9,8 +9,8 @@ spec:
   generators:
     - list:
         elements:
-          - chart: infra/rbac
-            name: rxpulse-rbac-prod
+          - chart: infra/base
+            name: rxpulse-base-prod
           - chart: infra/sealed-secrets
             name: rxpulse-secrets-prod
           - chart: infra/mongodb

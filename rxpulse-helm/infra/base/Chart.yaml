@@ -1,0 +1,7 @@
+apiVersion: v2
+name: base
+description: RxPulse Base — Namespace, ConfigMap, and ServiceAccount resources
+type: application
+version: 1.0.0
+maintainers:
+  - name: RxPulse Team

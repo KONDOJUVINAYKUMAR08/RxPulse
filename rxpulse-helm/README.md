@@ -13,7 +13,7 @@ rxpulse-helm/
 │   └── frontend/            # React SPA with Argo Rollouts blue-green
 │
 ├── infra/                   # Infrastructure layer (deploy first)
-│   ├── rbac/                # Namespace + ConfigMap
+│   ├── base/                # Namespace + ConfigMap
 │   ├── sealed-secrets/      # Kubernetes Secret (dev) / SealedSecret (prod)
 │   ├── mongodb/             # MongoDB StatefulSets + Services + PVCs
 │   └── gateway/             # KGateway + HTTPRoute
@@ -39,7 +39,7 @@ rxpulse-helm/
 NAMESPACE=rxpulse-dev
 
 # 1. Namespace + ConfigMap
-helm install rxpulse-rbac ./infra/rbac \
+helm install rxpulse-base ./infra/base \
   -n $NAMESPACE --create-namespace \
   -f environments/values-dev.yaml
 
@@ -92,7 +92,7 @@ NAMESPACE=rxpulse-prod
 #   --from-literal=MONGO_ROOT_PASSWORD=<strong-pw> \
 #   -n $NAMESPACE --dry-run=client -o yaml | kubeseal -o yaml > sealed.yaml
 
-helm install rxpulse-rbac      ./infra/rbac           -n $NAMESPACE --create-namespace -f environments/values-prod.yaml
+helm install rxpulse-base      ./infra/base           -n $NAMESPACE --create-namespace -f environments/values-prod.yaml
 helm install rxpulse-mongodb   ./infra/mongodb         -n $NAMESPACE -f environments/values-prod.yaml
 helm install rxpulse-gateway   ./infra/gateway         -n $NAMESPACE -f environments/values-prod.yaml
 helm install rxpulse-user      ./charts/user           -n $NAMESPACE -f environments/values-prod.yaml
