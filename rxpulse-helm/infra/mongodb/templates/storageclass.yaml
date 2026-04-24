@@ -5,10 +5,11 @@ metadata:
   labels:
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: Helm
-provisioner: nfs.csi.k8s.io
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: cluster.local/nfs-client-nfs-subdir-external-provisioner
 parameters:
-  server: "{{ .Values.nfs.server }}"
-  share: "{{ .Values.nfs.share }}"
+  archiveOnDelete: "false"
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 allowVolumeExpansion: true

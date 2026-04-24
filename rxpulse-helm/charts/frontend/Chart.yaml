@@ -10,8 +10,3 @@ keywords:
   - pharmacy
 maintainers:
   - name: RxPulse Team
-dependencies:
-  - name: argo-rollouts
-    version: ">=2.0.0"
-    repository: https://argoproj.github.io/argo-helm
-    condition: argoRollouts.enabled
