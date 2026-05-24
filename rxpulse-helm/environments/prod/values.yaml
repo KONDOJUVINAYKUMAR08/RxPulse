@@ -1,0 +1,53 @@
+
+global:
+  namespace: rxpulse-prod
+  environment: prod
+  services:
+    frontend:
+      tag: v0.2.0
+      replicaCount: 2
+    user:
+      tag: v0.0.1
+      replicaCount: 1
+    catalog:
+      tag: v0.0.1
+      replicaCount: 1
+    inventory:
+      tag: v0.0.1
+      replicaCount: 1
+
+catalog:
+  seedJob:
+    enabled: true
+inventory:
+  seedJob:
+    enabled: true
+frontend:
+  blueGreen:
+    autoPromotionEnabled: false
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+base:
+  namespace: rxpulse-prod
+  configMap:
+    nodeEnv: production
+mongodb:
+  createStorageClass: true
+  storage: 20Gi
+  storageClass: nfs-client
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi

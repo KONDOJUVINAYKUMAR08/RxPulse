@@ -2,13 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inventory-service
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     app: inventory-service
     app.kubernetes.io/name: inventory-service
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: Helm
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.global.services.inventory.replicaCount }}
   selector:
     matchLabels:
       app: inventory-service
@@ -26,7 +28,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: inventory-service
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.global.services.inventory.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
@@ -37,6 +39,9 @@ spec:
             runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
             runAsUser: {{ .Values.securityContext.runAsUser }}
             runAsGroup: {{ .Values.securityContext.runAsGroup }}
+          envFrom:
+            - secretRef:
+                name: rxpulse-secrets
           env:
             - name: PORT
               valueFrom:
@@ -53,16 +58,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secretName }}
                   key: MONGO_INVENTORY_URI
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secretName }}
-                  key: JWT_SECRET
-            - name: JWT_EXPIRES_IN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secretName }}
-                  key: JWT_EXPIRES_IN
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:

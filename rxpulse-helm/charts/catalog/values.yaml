@@ -1,15 +1,13 @@
 
-replicaCount: 1
-
 image:
   repository: rxpulsehub/rxpulse-catalog
-  tag: latest
   pullPolicy: Always
 
 service:
   type: ClusterIP
   port: 3002
   targetPort: 3002
+
 secretName: rxpulse-secrets
 configMapName: rxpulse-config
 
@@ -20,6 +18,7 @@ resources:
   limits:
     cpu: 300m
     memory: 256Mi
+
 seedJob:
   enabled: true
   backoffLimit: 6

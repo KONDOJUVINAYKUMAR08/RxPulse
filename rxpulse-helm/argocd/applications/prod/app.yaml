@@ -1,0 +1,109 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rxpulse-prod
+  namespace: argocd
+  labels:
+    environment: prod
+spec:
+  project: rxpulse
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rxpulse-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+  
+    - group: ""
+      kind: Service
+      name: frontend-active
+      jsonPointers:
+        - /spec/selector
+    - group: ""
+      kind: Service
+      name: frontend-preview
+      jsonPointers:
+        - /spec/selector
+  
+    - group: argoproj.io
+      kind: Rollout
+      jsonPointers:
+        - /spec/restartAt
+        - /spec/template/spec/containers/0/image
+        - /status
+
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      jsonPointers:
+        - /spec/parentRefs
+        - /spec/rules
+  sources:
+    # 0. Values reference source (repo root, used by $values below)
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      ref: values
+
+    # 1. Namespace & Sealed Secrets (raw YAMLs)
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: environments/prod
+      directory:
+        include: '*.yaml'
+
+    # 2. Infra Base
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: infra/base
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    # 3. MongoDB
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: infra/mongodb
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    # 4. Gateway
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: infra/gateway
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    # 5. Microservices
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: charts/user
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: charts/catalog
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: charts/inventory
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml
+
+    - repoURL: https://github.com/RxPulse/rxpulse-helmcharts.git
+      targetRevision: main
+      path: charts/frontend
+      helm:
+        valueFiles:
+          - $values/environments/prod/values.yaml

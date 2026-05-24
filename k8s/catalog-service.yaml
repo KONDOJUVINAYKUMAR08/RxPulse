@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  namespace: rxpulse
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalog-service
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+    spec:
+      containers:
+        - name: catalog-service
+          image: rxpulsehub/rxpulse-catalog:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3002
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3002
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            periodSeconds: 10
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: rxpulse-config
+                  key: CATALOG_SERVICE_PORT
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: rxpulse-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: MONGO_CATALOG_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rxpulse-secrets
+                  key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+  namespace: rxpulse
+spec:
+  selector:
+    app: catalog-service
+  ports:
+    - port: 3002
+      targetPort: 3002
+  type: ClusterIP

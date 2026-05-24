@@ -8,11 +8,11 @@ metadata:
 spec:
   description: RxPulse Pharmacy Management Platform
   sourceRepos:
-    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-helm.git
-    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-frontend.git
-    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-user-service.git
-    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-catalog-service.git
-    - https://github.com/KONDOJUVINAYKUMAR08/rxpulse-inventory-service.git
+    - https://github.com/RxPulse/rxpulse-helmcharts.git
+    - https://github.com/RxPulse/rxpulse-frontend.git
+    - https://github.com/RxPulse/rxpulse-userservice.git
+    - https://github.com/RxPulse/rxpulse-catalogservice.git
+    - https://github.com/RxPulse/rxpulse-inventoryservice.git
   destinations:
     - server: https://kubernetes.default.svc
       namespace: rxpulse-dev

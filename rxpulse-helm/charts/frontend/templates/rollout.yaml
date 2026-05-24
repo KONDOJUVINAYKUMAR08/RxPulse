@@ -2,13 +2,15 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: frontend
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     app: frontend
     app.kubernetes.io/name: frontend
     app.kubernetes.io/part-of: rxpulse
     app.kubernetes.io/managed-by: Helm
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.global.services.frontend.replicaCount }}
   selector:
     matchLabels:
       app: frontend
@@ -26,7 +28,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: frontend
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.global.services.frontend.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
@@ -37,6 +39,9 @@ spec:
             runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
             runAsUser: {{ .Values.securityContext.runAsUser }}
             runAsGroup: {{ .Values.securityContext.runAsGroup }}
+          envFrom:
+            - secretRef:
+                name: rxpulse-secrets
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
@@ -59,5 +64,5 @@ spec:
     blueGreen:
       activeService: {{ .Values.blueGreen.activeService }}
       previewService: {{ .Values.blueGreen.previewService }}
-      autoPromotionEnabled: {{ .Values.blueGreen.autoPromotionEnabled }}
+      autoPromotionEnabled: {{ .Values.blueGreen.autoPromotionEnabled | default false }}
       scaleDownDelaySeconds: {{ .Values.blueGreen.scaleDownDelaySeconds }}

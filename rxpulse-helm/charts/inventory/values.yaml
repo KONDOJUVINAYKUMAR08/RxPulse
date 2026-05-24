@@ -1,9 +1,6 @@
 
-replicaCount: 1
-
 image:
   repository: rxpulsehub/rxpulse-inventory
-  tag: latest
   pullPolicy: Always
 
 service:

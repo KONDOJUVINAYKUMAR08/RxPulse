@@ -1,10 +1,8 @@
 
-replicaCount: 2
-
 image:
   repository: rxpulsehub/rxpulse-frontend
-  tag: v3
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
+
 blueGreen:
   activeService: frontend-active
   previewService: frontend-preview

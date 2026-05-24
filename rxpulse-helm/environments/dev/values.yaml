@@ -1,0 +1,46 @@
+
+global:
+  namespace: rxpulse-dev
+  environment: dev
+  services:
+    frontend:
+      tag: develop-e4ff3d5f
+      replicaCount: 2
+    user:
+      tag: develop-8f27dcd3
+      replicaCount: 1
+    catalog:
+      tag: develop-3f69a4aa
+      replicaCount: 1
+    inventory:
+      tag: develop-5b9aaaf4
+      replicaCount: 1
+
+catalog:
+  seedJob:
+    enabled: true
+inventory:
+  seedJob:
+    enabled: true
+frontend:
+  blueGreen:
+    autoPromotionEnabled: false
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+base:
+  namespace: rxpulse-dev
+  configMap:
+    nodeEnv: development
+mongodb:
+  createStorageClass: true
+  storage: 5Gi
+  storageClass: nfs-client
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
