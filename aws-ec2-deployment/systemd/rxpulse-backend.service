@@ -1,0 +1,25 @@
+[Unit]
+Description=RxPulse Backend Services (PM2)
+After=network.target network-online.target mongodb.service
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=rxpulse
+Group=rxpulse
+LimitNOFILE=65536
+Environment=PATH=/usr/bin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=PM2_HOME=/home/rxpulse/.pm2
+Environment=NODE_ENV=production
+
+# PM2 startup behavior
+ExecStart=/usr/local/bin/pm2 resurrect
+ExecReload=/usr/local/bin/pm2 reload all
+ExecStop=/usr/local/bin/pm2 kill
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
